@@ -87,6 +87,11 @@
   ([id content]
      (link-to (url-format "/topology/%s" id) content)))
 
+(defn supervisor-link
+  ([id] (supervisor-link id id))
+  ([id content]
+    (link-to (url-format "/supervisor/%s" id) content)))
+
 (defn main-topology-summary-table [summs]
   ;; make the id clickable
   ;; make the table sortable
@@ -110,7 +115,7 @@
    ["Id" "Host" "Uptime" "Slots" "Used slots"]
    (for [^SupervisorSummary s summs]
      [(.get_supervisor_id s)
-      (.get_host s)
+      (supervisor-link (.get_supervisor_id s) (.get_host s))
       (pretty-uptime-sec (.get_uptime_secs s))
       (.get_num_workers s)
       (.get_num_used_workers s)])
@@ -727,6 +732,35 @@
         sys? (if (or (nil? sys?) (= "false" (:value sys?))) false true)]
     sys?))
 
+(defn supervisor-page [id window include-sys?]
+  (with-nimbus nimbus
+    (let [window (if window window ":all-time")
+          window-hint (window-hint window)
+          summ (.getTopologyInfo ^Nimbus$Client nimbus id)
+          topology (.getTopology ^Nimbus$Client nimbus id)
+          topology-conf (from-json (.getTopologyConf ^Nimbus$Client nimbus id))
+          spout-summs (filter (partial spout-summary? topology) (.get_executors summ))
+          bolt-summs (filter (partial bolt-summary? topology) (.get_executors summ))
+          spout-comp-summs (group-by-comp spout-summs)
+          bolt-comp-summs (group-by-comp bolt-summs)
+          bolt-comp-summs (filter-key (mk-include-sys-fn include-sys?) bolt-comp-summs)
+          name (.get_name summ)
+          status (.get_status summ)
+          msg-timeout (topology-conf TOPOLOGY-MESSAGE-TIMEOUT-SECS)
+          ]
+      (concat
+        [[:h2 "Topology summary"]]
+        [(topology-summary-table summ)]
+        [[:h2 "Topology stats"]]
+        (topology-stats-table id window (total-aggregate-stats spout-summs bolt-summs include-sys?))
+        [[:h2 "Spouts (" window-hint ")"]]
+        (spout-comp-table id spout-comp-summs (.get_errors summ) window include-sys?)
+        [[:h2 "Bolts (" window-hint ")"]]
+        (bolt-comp-table id bolt-comp-summs (.get_errors summ) window include-sys?)
+        [[:h2 "Topology Configuration"]]
+        (configuration-table topology-conf)
+        ))))
+
 (defroutes main-routes
   (GET "/" [:as {cookies :cookies}]
        (-> (main-page)
@@ -741,6 +775,18 @@
          (-> (component-page id component (:window m) include-sys?)
              (concat [(mk-system-toggle-button include-sys?)])
              ui-template)))
+  ; TODO Does include-sys here make sense?
+  (GET "/supervisor/:id" [:as {cookies :cookies} id & m]
+       (let [include-sys? (get-include-sys? cookies)]
+         (-> (supervisor-page id (:window m) include-sys?)
+             (concat [(mk-system-toggle-button include-sys?)])
+             ui-template))
+; TODO worker pages under supervisors
+;  (GET "/supervisor/:id/worker/:worker" [:as {cookies :cookies} id worker & m]
+;       (let [include-sys? (get-include-sys? cookies)]
+;         (-> (worker-page id worker (:window m) include-sys?)
+;             (concat [(mk-system-toggle-button include-sys?)])
+;             ui-template))
   (POST "/topology/:id/activate" [id]
     (with-nimbus nimbus
       (let [tplg (.getTopologyInfo ^Nimbus$Client nimbus id)
