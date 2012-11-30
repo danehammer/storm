@@ -1,4 +1,4 @@
-#!/usr/local/bin/thrift --gen java:beans,nocamel,hashcode
+#!/usr/local/bin/thrift --gen java:beans,nocamel,hashcode -out src/jvm
 
 namespace java backtype.storm.generated
 
@@ -205,6 +205,13 @@ struct SubmitOptions {
   1: required TopologyInitialStatus initial_status;
 }
 
+struct WorkerSummary {
+  1: string supervisor_id;
+  2: i32 port;
+  3: string host;
+  4: list<ExecutorSummary> executors;
+}
+
 service Nimbus {
   void submitTopology(1: string name, 2: string uploadedJarLocation, 3: string jsonConf, 4: StormTopology topology) throws (1: AlreadyAliveException e, 2: InvalidTopologyException ite);
   void submitTopologyWithOpts(1: string name, 2: string uploadedJarLocation, 3: string jsonConf, 4: StormTopology topology, 5: SubmitOptions options) throws (1: AlreadyAliveException e, 2: InvalidTopologyException ite);
@@ -233,6 +240,7 @@ service Nimbus {
   string getTopologyConf(1: string id) throws (1: NotAliveException e);
   StormTopology getTopology(1: string id) throws (1: NotAliveException e);
   StormTopology getUserTopology(1: string id) throws (1: NotAliveException e);
+  list<WorkerSummary> getWorkerInfo();
 }
 
 struct DRPCRequest {

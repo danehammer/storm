@@ -736,30 +736,31 @@
   (with-nimbus nimbus
     (let [window (if window window ":all-time")
           window-hint (window-hint window)
-          summ (.getTopologyInfo ^Nimbus$Client nimbus id)
-          topology (.getTopology ^Nimbus$Client nimbus id)
-          topology-conf (from-json (.getTopologyConf ^Nimbus$Client nimbus id))
-          spout-summs (filter (partial spout-summary? topology) (.get_executors summ))
-          bolt-summs (filter (partial bolt-summary? topology) (.get_executors summ))
-          spout-comp-summs (group-by-comp spout-summs)
-          bolt-comp-summs (group-by-comp bolt-summs)
-          bolt-comp-summs (filter-key (mk-include-sys-fn include-sys?) bolt-comp-summs)
-          name (.get_name summ)
-          status (.get_status summ)
-          msg-timeout (topology-conf TOPOLOGY-MESSAGE-TIMEOUT-SECS)
+          summ (.getClusterInfo ^Nimbus$Client nimbus)
+;          topology (.getTopology ^Nimbus$Client nimbus id)
+;          topology-conf (from-json (.getTopologyConf ^Nimbus$Client nimbus id))
+;          spout-summs (filter (partial spout-summary? topology) (.get_executors summ))
+;          bolt-summs (filter (partial bolt-summary? topology) (.get_executors summ))
+;          spout-comp-summs (group-by-comp spout-summs)
+;          bolt-comp-summs (group-by-comp bolt-summs)
+;          bolt-comp-summs (filter-key (mk-include-sys-fn include-sys?) bolt-comp-summs)
+;          name (.get_name summ)
+;          status (.get_status summ)
+;          msg-timeout (topology-conf TOPOLOGY-MESSAGE-TIMEOUT-SECS)
           ]
-      (concat
-        [[:h2 "Topology summary"]]
-        [(topology-summary-table summ)]
-        [[:h2 "Topology stats"]]
-        (topology-stats-table id window (total-aggregate-stats spout-summs bolt-summs include-sys?))
-        [[:h2 "Spouts (" window-hint ")"]]
-        (spout-comp-table id spout-comp-summs (.get_errors summ) window include-sys?)
-        [[:h2 "Bolts (" window-hint ")"]]
-        (bolt-comp-table id bolt-comp-summs (.get_errors summ) window include-sys?)
-        [[:h2 "Topology Configuration"]]
-        (configuration-table topology-conf)
-        ))))
+       summ)))
+;      (concat
+;        [[:h2 "Cluster summary"]]
+;        [(cluster-summary-table summ)]
+;        [[:h2 "Topology stats"]]
+;        (topology-stats-table id window (total-aggregate-stats spout-summs bolt-summs include-sys?))
+;        [[:h2 "Spouts (" window-hint ")"]]
+;        (spout-comp-table id spout-comp-summs (.get_errors summ) window include-sys?)
+;        [[:h2 "Bolts (" window-hint ")"]]
+;        (bolt-comp-table id bolt-comp-summs (.get_errors summ) window include-sys?)
+;        [[:h2 "Topology Configuration"]]
+;        (configuration-table topology-conf)
+;        ))))
 
 (defroutes main-routes
   (GET "/" [:as {cookies :cookies}]
@@ -780,7 +781,7 @@
        (let [include-sys? (get-include-sys? cookies)]
          (-> (supervisor-page id (:window m) include-sys?)
              (concat [(mk-system-toggle-button include-sys?)])
-             ui-template))
+             ui-template)))
 ; TODO worker pages under supervisors
 ;  (GET "/supervisor/:id/worker/:worker" [:as {cookies :cookies} id worker & m]
 ;       (let [include-sys? (get-include-sys? cookies)]
