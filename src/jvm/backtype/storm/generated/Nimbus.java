@@ -61,6 +61,8 @@ public class Nimbus {
 
     public StormTopology getUserTopology(String id) throws NotAliveException, org.apache.thrift7.TException;
 
+    public List<WorkerSummary> getWorkerInfo() throws org.apache.thrift7.TException;
+
   }
 
   public interface AsyncIface {
@@ -100,6 +102,8 @@ public class Nimbus {
     public void getTopology(String id, org.apache.thrift7.async.AsyncMethodCallback<AsyncClient.getTopology_call> resultHandler) throws org.apache.thrift7.TException;
 
     public void getUserTopology(String id, org.apache.thrift7.async.AsyncMethodCallback<AsyncClient.getUserTopology_call> resultHandler) throws org.apache.thrift7.TException;
+
+    public void getWorkerInfo(org.apache.thrift7.async.AsyncMethodCallback<AsyncClient.getWorkerInfo_call> resultHandler) throws org.apache.thrift7.TException;
 
   }
 
@@ -557,6 +561,28 @@ public class Nimbus {
         throw result.e;
       }
       throw new org.apache.thrift7.TApplicationException(org.apache.thrift7.TApplicationException.MISSING_RESULT, "getUserTopology failed: unknown result");
+    }
+
+    public List<WorkerSummary> getWorkerInfo() throws org.apache.thrift7.TException
+    {
+      send_getWorkerInfo();
+      return recv_getWorkerInfo();
+    }
+
+    public void send_getWorkerInfo() throws org.apache.thrift7.TException
+    {
+      getWorkerInfo_args args = new getWorkerInfo_args();
+      sendBase("getWorkerInfo", args);
+    }
+
+    public List<WorkerSummary> recv_getWorkerInfo() throws org.apache.thrift7.TException
+    {
+      getWorkerInfo_result result = new getWorkerInfo_result();
+      receiveBase(result, "getWorkerInfo");
+      if (result.is_set_success()) {
+        return result.success;
+      }
+      throw new org.apache.thrift7.TApplicationException(org.apache.thrift7.TApplicationException.MISSING_RESULT, "getWorkerInfo failed: unknown result");
     }
 
   }
@@ -1174,6 +1200,35 @@ public class Nimbus {
       }
     }
 
+    public void getWorkerInfo(org.apache.thrift7.async.AsyncMethodCallback<getWorkerInfo_call> resultHandler) throws org.apache.thrift7.TException {
+      checkReady();
+      getWorkerInfo_call method_call = new getWorkerInfo_call(resultHandler, this, ___protocolFactory, ___transport);
+      this.___currentMethod = method_call;
+      ___manager.call(method_call);
+    }
+
+    public static class getWorkerInfo_call extends org.apache.thrift7.async.TAsyncMethodCall {
+      public getWorkerInfo_call(org.apache.thrift7.async.AsyncMethodCallback<getWorkerInfo_call> resultHandler, org.apache.thrift7.async.TAsyncClient client, org.apache.thrift7.protocol.TProtocolFactory protocolFactory, org.apache.thrift7.transport.TNonblockingTransport transport) throws org.apache.thrift7.TException {
+        super(client, protocolFactory, transport, resultHandler, false);
+      }
+
+      public void write_args(org.apache.thrift7.protocol.TProtocol prot) throws org.apache.thrift7.TException {
+        prot.writeMessageBegin(new org.apache.thrift7.protocol.TMessage("getWorkerInfo", org.apache.thrift7.protocol.TMessageType.CALL, 0));
+        getWorkerInfo_args args = new getWorkerInfo_args();
+        args.write(prot);
+        prot.writeMessageEnd();
+      }
+
+      public List<WorkerSummary> getResult() throws org.apache.thrift7.TException {
+        if (getState() != org.apache.thrift7.async.TAsyncMethodCall.State.RESPONSE_READ) {
+          throw new IllegalStateException("Method call not finished!");
+        }
+        org.apache.thrift7.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift7.transport.TMemoryInputTransport(getFrameBuffer().array());
+        org.apache.thrift7.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
+        return (new Client(prot)).recv_getWorkerInfo();
+      }
+    }
+
   }
 
   public static class Processor<I extends Iface> extends org.apache.thrift7.TBaseProcessor implements org.apache.thrift7.TProcessor {
@@ -1205,6 +1260,7 @@ public class Nimbus {
       processMap.put("getTopologyConf", new getTopologyConf());
       processMap.put("getTopology", new getTopology());
       processMap.put("getUserTopology", new getUserTopology());
+      processMap.put("getWorkerInfo", new getWorkerInfo());
       return processMap;
     }
 
@@ -1542,6 +1598,22 @@ public class Nimbus {
         } catch (NotAliveException e) {
           result.e = e;
         }
+        return result;
+      }
+    }
+
+    private static class getWorkerInfo<I extends Iface> extends org.apache.thrift7.ProcessFunction<I, getWorkerInfo_args> {
+      public getWorkerInfo() {
+        super("getWorkerInfo");
+      }
+
+      protected getWorkerInfo_args getEmptyArgsInstance() {
+        return new getWorkerInfo_args();
+      }
+
+      protected getWorkerInfo_result getResult(I iface, getWorkerInfo_args args) throws org.apache.thrift7.TException {
+        getWorkerInfo_result result = new getWorkerInfo_result();
+        result.success = iface.getWorkerInfo();
         return result;
       }
     }
@@ -13460,6 +13532,546 @@ public class Nimbus {
         sb.append("null");
       } else {
         sb.append(this.e);
+      }
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift7.TException {
+      // check for required fields
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift7.protocol.TCompactProtocol(new org.apache.thrift7.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift7.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        read(new org.apache.thrift7.protocol.TCompactProtocol(new org.apache.thrift7.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift7.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+  }
+
+  public static class getWorkerInfo_args implements org.apache.thrift7.TBase<getWorkerInfo_args, getWorkerInfo_args._Fields>, java.io.Serializable, Cloneable   {
+    private static final org.apache.thrift7.protocol.TStruct STRUCT_DESC = new org.apache.thrift7.protocol.TStruct("getWorkerInfo_args");
+
+
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift7.TFieldIdEnum {
+;
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+    public static final Map<_Fields, org.apache.thrift7.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift7.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift7.meta_data.FieldMetaData>(_Fields.class);
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift7.meta_data.FieldMetaData.addStructMetaDataMap(getWorkerInfo_args.class, metaDataMap);
+    }
+
+    public getWorkerInfo_args() {
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public getWorkerInfo_args(getWorkerInfo_args other) {
+    }
+
+    public getWorkerInfo_args deepCopy() {
+      return new getWorkerInfo_args(this);
+    }
+
+    @Override
+    public void clear() {
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof getWorkerInfo_args)
+        return this.equals((getWorkerInfo_args)that);
+      return false;
+    }
+
+    public boolean equals(getWorkerInfo_args that) {
+      if (that == null)
+        return false;
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      HashCodeBuilder builder = new HashCodeBuilder();
+
+      return builder.toHashCode();
+    }
+
+    public int compareTo(getWorkerInfo_args other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+      getWorkerInfo_args typedOther = (getWorkerInfo_args)other;
+
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift7.protocol.TProtocol iprot) throws org.apache.thrift7.TException {
+      org.apache.thrift7.protocol.TField field;
+      iprot.readStructBegin();
+      while (true)
+      {
+        field = iprot.readFieldBegin();
+        if (field.type == org.apache.thrift7.protocol.TType.STOP) { 
+          break;
+        }
+        switch (field.id) {
+          default:
+            org.apache.thrift7.protocol.TProtocolUtil.skip(iprot, field.type);
+        }
+        iprot.readFieldEnd();
+      }
+      iprot.readStructEnd();
+      validate();
+    }
+
+    public void write(org.apache.thrift7.protocol.TProtocol oprot) throws org.apache.thrift7.TException {
+      validate();
+
+      oprot.writeStructBegin(STRUCT_DESC);
+      oprot.writeFieldStop();
+      oprot.writeStructEnd();
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("getWorkerInfo_args(");
+      boolean first = true;
+
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift7.TException {
+      // check for required fields
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift7.protocol.TCompactProtocol(new org.apache.thrift7.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift7.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        read(new org.apache.thrift7.protocol.TCompactProtocol(new org.apache.thrift7.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift7.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+  }
+
+  public static class getWorkerInfo_result implements org.apache.thrift7.TBase<getWorkerInfo_result, getWorkerInfo_result._Fields>, java.io.Serializable, Cloneable   {
+    private static final org.apache.thrift7.protocol.TStruct STRUCT_DESC = new org.apache.thrift7.protocol.TStruct("getWorkerInfo_result");
+
+    private static final org.apache.thrift7.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift7.protocol.TField("success", org.apache.thrift7.protocol.TType.LIST, (short)0);
+
+    private List<WorkerSummary> success; // required
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift7.TFieldIdEnum {
+      SUCCESS((short)0, "success");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 0: // SUCCESS
+            return SUCCESS;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+
+    public static final Map<_Fields, org.apache.thrift7.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift7.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift7.meta_data.FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.SUCCESS, new org.apache.thrift7.meta_data.FieldMetaData("success", org.apache.thrift7.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift7.meta_data.ListMetaData(org.apache.thrift7.protocol.TType.LIST, 
+              new org.apache.thrift7.meta_data.StructMetaData(org.apache.thrift7.protocol.TType.STRUCT, WorkerSummary.class))));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift7.meta_data.FieldMetaData.addStructMetaDataMap(getWorkerInfo_result.class, metaDataMap);
+    }
+
+    public getWorkerInfo_result() {
+    }
+
+    public getWorkerInfo_result(
+      List<WorkerSummary> success)
+    {
+      this();
+      this.success = success;
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public getWorkerInfo_result(getWorkerInfo_result other) {
+      if (other.is_set_success()) {
+        List<WorkerSummary> __this__success = new ArrayList<WorkerSummary>();
+        for (WorkerSummary other_element : other.success) {
+          __this__success.add(new WorkerSummary(other_element));
+        }
+        this.success = __this__success;
+      }
+    }
+
+    public getWorkerInfo_result deepCopy() {
+      return new getWorkerInfo_result(this);
+    }
+
+    @Override
+    public void clear() {
+      this.success = null;
+    }
+
+    public int get_success_size() {
+      return (this.success == null) ? 0 : this.success.size();
+    }
+
+    public java.util.Iterator<WorkerSummary> get_success_iterator() {
+      return (this.success == null) ? null : this.success.iterator();
+    }
+
+    public void add_to_success(WorkerSummary elem) {
+      if (this.success == null) {
+        this.success = new ArrayList<WorkerSummary>();
+      }
+      this.success.add(elem);
+    }
+
+    public List<WorkerSummary> get_success() {
+      return this.success;
+    }
+
+    public void set_success(List<WorkerSummary> success) {
+      this.success = success;
+    }
+
+    public void unset_success() {
+      this.success = null;
+    }
+
+    /** Returns true if field success is set (has been assigned a value) and false otherwise */
+    public boolean is_set_success() {
+      return this.success != null;
+    }
+
+    public void set_success_isSet(boolean value) {
+      if (!value) {
+        this.success = null;
+      }
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case SUCCESS:
+        if (value == null) {
+          unset_success();
+        } else {
+          set_success((List<WorkerSummary>)value);
+        }
+        break;
+
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case SUCCESS:
+        return get_success();
+
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      case SUCCESS:
+        return is_set_success();
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof getWorkerInfo_result)
+        return this.equals((getWorkerInfo_result)that);
+      return false;
+    }
+
+    public boolean equals(getWorkerInfo_result that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_success = true && this.is_set_success();
+      boolean that_present_success = true && that.is_set_success();
+      if (this_present_success || that_present_success) {
+        if (!(this_present_success && that_present_success))
+          return false;
+        if (!this.success.equals(that.success))
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      HashCodeBuilder builder = new HashCodeBuilder();
+
+      boolean present_success = true && (is_set_success());
+      builder.append(present_success);
+      if (present_success)
+        builder.append(success);
+
+      return builder.toHashCode();
+    }
+
+    public int compareTo(getWorkerInfo_result other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+      getWorkerInfo_result typedOther = (getWorkerInfo_result)other;
+
+      lastComparison = Boolean.valueOf(is_set_success()).compareTo(typedOther.is_set_success());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (is_set_success()) {
+        lastComparison = org.apache.thrift7.TBaseHelper.compareTo(this.success, typedOther.success);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift7.protocol.TProtocol iprot) throws org.apache.thrift7.TException {
+      org.apache.thrift7.protocol.TField field;
+      iprot.readStructBegin();
+      while (true)
+      {
+        field = iprot.readFieldBegin();
+        if (field.type == org.apache.thrift7.protocol.TType.STOP) { 
+          break;
+        }
+        switch (field.id) {
+          case 0: // SUCCESS
+            if (field.type == org.apache.thrift7.protocol.TType.LIST) {
+              {
+                org.apache.thrift7.protocol.TList _list167 = iprot.readListBegin();
+                this.success = new ArrayList<WorkerSummary>(_list167.size);
+                for (int _i168 = 0; _i168 < _list167.size; ++_i168)
+                {
+                  WorkerSummary _elem169; // required
+                  _elem169 = new WorkerSummary();
+                  _elem169.read(iprot);
+                  this.success.add(_elem169);
+                }
+                iprot.readListEnd();
+              }
+            } else { 
+              org.apache.thrift7.protocol.TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          default:
+            org.apache.thrift7.protocol.TProtocolUtil.skip(iprot, field.type);
+        }
+        iprot.readFieldEnd();
+      }
+      iprot.readStructEnd();
+      validate();
+    }
+
+    public void write(org.apache.thrift7.protocol.TProtocol oprot) throws org.apache.thrift7.TException {
+      oprot.writeStructBegin(STRUCT_DESC);
+
+      if (this.is_set_success()) {
+        oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
+        {
+          oprot.writeListBegin(new org.apache.thrift7.protocol.TList(org.apache.thrift7.protocol.TType.STRUCT, this.success.size()));
+          for (WorkerSummary _iter170 : this.success)
+          {
+            _iter170.write(oprot);
+          }
+          oprot.writeListEnd();
+        }
+        oprot.writeFieldEnd();
+      }
+      oprot.writeFieldStop();
+      oprot.writeStructEnd();
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("getWorkerInfo_result(");
+      boolean first = true;
+
+      sb.append("success:");
+      if (this.success == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.success);
       }
       first = false;
       sb.append(")");

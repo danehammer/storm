@@ -879,7 +879,8 @@
                         (fn []
                           (clean-inbox (inbox nimbus) (conf NIMBUS-INBOX-JAR-EXPIRATION-SECS))
                           ))    
-    (reify Nimbus$Iface
+    (reify
+      Nimbus$Iface
       (^void submitTopologyWithOpts
         [this ^String storm-name ^String uploadedJarLocation ^String serializedConf ^StormTopology topology
          ^SubmitOptions submitOptions]
@@ -1094,6 +1095,17 @@
                          errors
                          )
           ))
+
+      (^List getWorkerInfo [this]
+        (let [storm-cluster-state (:storm-cluster-state nimbus)
+              supervisor-infos (all-supervisor-info storm-cluster-state)
+              worker-summaries (dofor)
+              ]
+          ; Starting with getting one worker with fake data
+          (list (WorkerSummary. "supervisor-id"
+                                6700
+                                "host-name"
+                                (list)))))
       
       Shutdownable
       (shutdown [this]
