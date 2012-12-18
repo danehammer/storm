@@ -23,6 +23,7 @@ _release
 *.iml
 /target
 /.project
+/.classpath
 /.lein-plugins/
 *.ipr
 *.iws
