@@ -24,6 +24,7 @@ _release
 /target
 /.project
 /.classpath
+/.settings/
 /.lein-plugins/
 *.ipr
 *.iws
