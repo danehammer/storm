@@ -22,7 +22,7 @@ _release
 .lein-deps-sum
 *.iml
 /target
-/.project/
+/.project
 /.lein-plugins/
 *.ipr
 *.iws
