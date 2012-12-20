@@ -2,6 +2,6 @@
 jps | grep [n]imbus | awk '{print $1}' | xargs kill
 
 lein jar
-cp target/storm-0.9*.jar /usr/local/Cellar/storm/0.8.1/libexec/
+cp target/storm-0.9.0-wip9.jar storm-0.9.0-wip9/ 
 
-storm nimbus &
+storm-0.9.0-wip9/bin/storm nimbus &

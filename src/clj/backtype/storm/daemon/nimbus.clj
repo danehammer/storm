@@ -1100,12 +1100,15 @@
         (let [storm-cluster-state (:storm-cluster-state nimbus)
               bases (topology-bases storm-cluster-state)
               worker-summaries (dofor [[id base] bases]
-                                        (let [assignment (.assignment-info storm-cluster-state id nil)]
-                                          (for [[k v] (:executor->node+port assignment)]
-                                                (WorkerSummary. k
-                                                                6700
-                                                                v
-                                                                (list)))))]))
+                                 (let [assignment (.assignment-info storm-cluster-state id nil)]                                   
+                                   (println assignment)  
+                                   (dofor [[k v] (:executor->node+port assignment)]
+                                       (WorkerSummary. (str k)
+                                                       6700
+                                                       (str v)
+                                                       (list)))))]
+          (flatten worker-summaries)))
+      
       Shutdownable
       (shutdown [this]
         (log-message "Shutting down master")
