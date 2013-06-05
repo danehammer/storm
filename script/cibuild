@@ -1,2 +1,2 @@
-#bash bin/build_modules.sh
-exit 1
+bash bin/build_modules.sh
+#exit 1
